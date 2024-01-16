@@ -8,7 +8,8 @@ CREATE TABLE products (
   inventory_status TEXT,
   category TEXT,
   image TEXT,
-  rating INTEGER
+  rating INTEGER,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 );
 
 CREATE TABLE users (
