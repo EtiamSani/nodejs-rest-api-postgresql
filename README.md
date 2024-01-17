@@ -20,9 +20,13 @@ Run server locally
 
 ```node server.js or nodemon server.js```
 
+Open pgAdmin4 in your browser (http://localhost:5050) and create the tables
+
 Database seeding
 
 navigate to the "script" folder then : 
+
+copy/past your .env file, then run this following command
 
 ```node seedingDB.js```
 
@@ -131,9 +135,10 @@ DELETE /products/:id
 ```
 
 - app: contains REST API routes
+
     - controller: Contains controllers for authentication and products.
     - routes: Contains routes for authentication and products.
     - db: Includes scripts and configurations related to the database. It contains init_tables.sql for initializing database tables and pg.js for PostgreSQL database connections.
     - middlewares: Holds middleware functions used in the request-response cycle. The index.js file typically exports all middleware functions, and specific middleware, such as isAdminMiddleware.js and isAuthMiddleware.js, handle authorization and authentication checks.
     - model: Consists of model files defining the data structures and database interactions. coreDatamapper.js serves as a foundational data mapper, while productsModel.js and usersModel.js define specific models for products and users, respectively.
-    - script: Contains scripts. The seedingDB.js script, for instance, is responsible for seeding the database with initial data.
+    - script: Contains scripts. The seedingDB.js script, for instance, is responsible for seeding the database with initial data. 
