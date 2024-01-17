@@ -1,44 +1,139 @@
-# Back-end
+# REST API with Postgresql
 
-Développer un back-end permettant la gestion de produits définis plus bas. Vous pouvez utiliser la technologie de votre choix parmis la list suivante :
+## Purpose
 
-- nodejs/express
-- Java/Spring Boot
-- C#/.net Core
-- Python/Flask
+This project serves as a REST API implementation that performs CRUD operations on PostgreSQL and includes an authentication system for user signup and signin.
 
-Le back-end doit gérer les API REST suivantes : 
+## Usage
 
-| Resource           | POST                  | GET                            | PATCH                                    | PUT | DELETE           |
-| ------------------ | --------------------- | ------------------------------ | ---------------------------------------- | --- | ---------------- |
-| **/products**      | Create a new products | Retrieve all products          | X                                        | X   |     X            |
-| **/products/1**    | X                     | Retrieve details for product 1 | Update details of product 1 if it exists | X   | Remove product 1 |
+Navigate to the "back" folder and follow these steps:
 
-Un produit a les caractéristiques suivantes : 
+Install dependencies:
 
-``` typescript
-class Product {
-  id: number;
-  code: string;
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  inventoryStatus: string;
-  category: string;
-  image?: string;
-  rating?: number;
+```npm install```
+
+Set up the local environment with Docker Compose:
+
+```docker-compose up -d```
+
+Run server locally
+
+```node server.js or nodemon server.js```
+
+Database seeding
+
+navigate to the "script" folder then : 
+
+```node seedingDB.js```
+
+Tear down local environment with docker-compose
+
+```docker-compose down```
+
+
+### Local
+
+We use docker-compose to setup local environment (postgreSQL and pgAdmin4)
+
+### Env variables
+
+Use `.env.example` to generate your `.env` file
+
+## Authentication
+
+Users must be authorized with a JSON Web Token (JWT) to access their data.
+
+Include the following header in your requests:
+
+```Authorization: Bearer jwt-token```
+
+## Roles 
+
+The application supports role-based access control. Each user has an associated role, determining their level of access. The following roles are available:
+
+    - Admin: Full access to all resources and operations.
+    - User: Standard user role with limited privileges.
+
+To assign a role during user creation, include the role parameter in the signup request:
+
+POST /auth/signup
+
+```
+{
+  "email":"user@example.com",
+  "username": "example",
+  "password": "securepassword",
+  "role": "user" // or "admin" for admin privileges
 }
 ```
 
-Le back-end créé doit pouvoir gérer les produits dans une base de données SQL/NoSQL ou dans un fichier json.
 
-Une liste de produits est disponible dans ce fichier : `front/assets/products.json`
+### Routes
 
-Un front-end en Angular est disponible et permet d'utiliser l'API via cette adresse : `http://localhost:3000`
+The following routes require authentication:
 
-vous pouvez lancer le front-end angular avec la commande 'ng serve'
+```
+GET /products
+GET /products/:id
+PATCH /products/:id
+POST /products
+DELETE /products/:id
+```
 
-# Bonus
+The following routes require authentication and admin role:
 
-Vous pouvez ajouter des tests Postman ou Swagger pour valider votre API
+```
+PATCH /products/:id
+POST /products
+DELETE /products/:id
+```
+
+## Structure
+
+```
+├───back
+│   │   .env
+│   │   .env.example
+│   │   .gitignore
+│   │   app.js
+│   │   docker-compose.yml
+│   │   package-lock.json
+│   │   package.json
+│   │   server.js
+│   │   
+│   ├───app
+│       ├───controller
+│       │       authController.js
+│       │       productController.js
+│       │       
+│       ├───db
+│       │       init_tables.sql
+│       │       pg.js
+│       │       
+│       ├───middlewares
+│       │       index.js
+│       │       isAdminMiddleware.js
+│       │       isAuthMiddleware.js
+│       │       
+│       ├───model
+│       │       coreDatamapper.js
+│       │       productsModel.js
+│       │       usersModel.js
+│       │       
+│       ├───routes
+│       │       authRoute.js
+│       │       productsRoute.js
+│       │       
+│       └───script
+│               .env
+│               products.json
+│               seedingDB.js
+```
+
+- app: contains REST API routes
+    - controller: Contains controllers for authentication and products.
+    - routes: Contains routes for authentication and products.
+    - db: Includes scripts and configurations related to the database. It contains init_tables.sql for initializing database tables and pg.js for PostgreSQL database connections.
+    - middlewares: Holds middleware functions used in the request-response cycle. The index.js file typically exports all middleware functions, and specific middleware, such as isAdminMiddleware.js and isAuthMiddleware.js, handle authorization and authentication checks.
+    - model: Consists of model files defining the data structures and database interactions. coreDatamapper.js serves as a foundational data mapper, while productsModel.js and usersModel.js define specific models for products and users, respectively.
+    - script: Contains scripts. The seedingDB.js script, for instance, is responsible for seeding the database with initial data.
