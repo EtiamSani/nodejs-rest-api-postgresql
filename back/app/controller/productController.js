@@ -70,7 +70,6 @@ const productController = {
     const productId = req.params.id;
     const { updatedProperty, updatedValue } = req.body;
 
-    // Check if the provided property is valid
     const allowedProperties = [
       "code",
       "name",
